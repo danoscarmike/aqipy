@@ -7,7 +7,7 @@ import requests
 @click.command()
 @click.argument('geo', required=False)
 @click.option('--latlon', '-l', help='Format: Latitude;Longitude')
-def main(geo, latlon):
+def main(geo):
     """A simple command line tool to find Air Quality Indices (AQI)
     from around the world."""
 
@@ -21,8 +21,7 @@ def main(geo, latlon):
     base_url = 'http://api.waqi.info/feed/'
 
     if geo:
-        if not latlon:
-            latlon = input("Enter decimal lat and lon in the form: lat;lon: ")
+        latlon = click.prompt("Enter decimal lat and lon in the form: lat;lon")
         url = f'{base_url}geo:{latlon}/'
         location, aqi, attribs = api_request(url, payload)
         print(f'\nThe AQI at {location} is {aqi}.\n')
