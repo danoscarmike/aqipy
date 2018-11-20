@@ -7,7 +7,7 @@ import requests
 @click.command()
 @click.argument('geo', required=False)
 @click.option('--latlon', '-l', help='Format: Latitude;Longitude')
-def main(geo):
+def main(geo, latlon):
     """A simple command line tool to find Air Quality Indices (AQI)
     from around the world."""
 
@@ -50,7 +50,3 @@ def api_request(url, payload):
     aqi = response['data']['aqi']
     attribs = response['data']['attributions']
     return location, aqi, attribs
-
-
-if __name__ == '__main__':
-    main()
