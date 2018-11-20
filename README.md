@@ -11,8 +11,11 @@ A simple tool to get Air Quality Indices from around the world.
 `pip3 install -e .`
 
 ## Usage
-To get the AQI for your current location:    
+To get the AQI for your current location (IP based):    
 `aqipy`
 
 To get the AQI for a specific location (latitude;longitude):    
 `aqipy geo [--latlon <lat;lon>]`    
+
+## Attribution     
+This tool uses APIs provided by the [World Air Quality Index Project](http://waqi.info/).   

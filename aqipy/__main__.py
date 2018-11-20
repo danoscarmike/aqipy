@@ -24,12 +24,24 @@ def main(geo, latlon):
         if not latlon:
             latlon = input("Enter decimal lat and lon in the form: lat;lon: ")
         url = f'{base_url}geo:{latlon}/'
-        location, aqi = api_request(url, payload)
-        print(f'The AQI at {location} is {aqi}.')
+        location, aqi, attribs = api_request(url, payload)
+        print(f'\nThe AQI at {location} is {aqi}.\n')
+        print_attributions(attribs)
     else:
         url = f'{base_url}here/'
-        location, aqi = api_request(url, payload)
-        print(f'The AQI at {location} is {aqi}.')
+        location, aqi, attribs = api_request(url, payload)
+        print(f'\nThe AQI at {location} is {aqi}.\n')
+        print_attributions(attribs)
+
+
+def print_attributions(attribs):
+    print('With thanks to:')
+    i = 0
+    while i < len(attribs)-2:
+        print(f'{attribs[i]["name"]},')
+        i += 1
+    print(f'{attribs[-2]["name"]}, and')
+    print(f'{attribs[-1]["name"]}.\n')
 
 
 def api_request(url, payload):
@@ -37,7 +49,8 @@ def api_request(url, payload):
     response = r.json()
     location = response['data']['city']['name']
     aqi = response['data']['aqi']
-    return location, aqi
+    attribs = response['data']['attributions']
+    return location, aqi, attribs
 
 
 if __name__ == '__main__':
