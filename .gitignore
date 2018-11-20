@@ -90,6 +90,7 @@ env/
 venv/
 ENV/
 env.bak/
+pip-selfcheck.json
 pyvenv.cfg
 venv.bak/
 
