@@ -4,53 +4,54 @@ import os
 import requests
 
 
-@click.command()
-@click.argument('geo', required=False)
-@click.option('--latlon', '-l', help='Format: Latitude;Longitude')
-def main(geo):
+@click.group(invoke_without_command=True)
+@click.pass_context
+def main(ctx):
     """A simple command line tool to find Air Quality Indices (AQI)
     from around the world."""
 
+    ctx.ensure_object(dict)
+
     try:
         api_token = os.environ['AQIPY_TOKEN']
-        payload = {'token': api_token}
+        ctx.obj['TOKEN'] = {'token': api_token}
+        ctx.obj['BASE_URL'] = 'http://api.waqi.info/feed/'
     except:
-        print('ERROR: You must set AQIPY_TOKEN environment variable.')
+        click.echo(f'ERROR: You must set an AQIPY_TOKEN environment variable.')
         return
 
-    base_url = 'http://api.waqi.info/feed/'
+    if ctx.invoked_subcommand is None:
+        url = f'{ctx.obj["BASE_URL"]}here/'
+        location, aqi, attribs = api_request(url, ctx.obj['TOKEN'])
+        click.echo(f'\nThe AQI at {location} is {aqi}.\n')
+        echo_attributions(attribs)
 
-    if geo:
+
+@main.command()
+@click.pass_context
+@click.option('--latlon', '-l', help='Format: Latitude;Longitude')
+def geo(ctx, latlon):
+    if not latlon:
         latlon = click.prompt("Enter decimal lat and lon in the form: lat;lon")
-        url = f'{base_url}geo:{latlon}/'
-        location, aqi, attribs = api_request(url, payload)
-        print(f'\nThe AQI at {location} is {aqi}.\n')
-        print_attributions(attribs)
-    else:
-        url = f'{base_url}here/'
-        location, aqi, attribs = api_request(url, payload)
-        print(f'\nThe AQI at {location} is {aqi}.\n')
-        print_attributions(attribs)
+    url = f'{ctx.obj["BASE_URL"]}geo:{latlon}/'
+    location, aqi, attribs = api_request(url, ctx.obj['TOKEN'])
+    print(f'\nThe AQI at {location} is {aqi}.\n')
+    echo_attributions(attribs)
 
 
-def print_attributions(attribs):
-    print('With thanks to:')
+def echo_attributions(attribs):
+    click.echo('With thanks to:')
     i = 0
-    while i < len(attribs)-2:
+    while i < len(attribs)-1:
         print(f'{attribs[i]["name"]},')
         i += 1
-    print(f'{attribs[-2]["name"]}, and')
-    print(f'{attribs[-1]["name"]}.\n')
+    click.echo(f'and {attribs[-1]["name"]}.\n')
 
 
 def api_request(url, payload):
-    r = requests.get(url, payload)
+    r = requests.get(url, params=payload)
     response = r.json()
     location = response['data']['city']['name']
     aqi = response['data']['aqi']
     attribs = response['data']['attributions']
     return location, aqi, attribs
-
-
-if __name__ == '__main__':
-    main()
