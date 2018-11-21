@@ -22,9 +22,7 @@ def main(ctx):
 
     if ctx.invoked_subcommand is None:
         url = f'{ctx.obj["BASE_URL"]}here/'
-        location, aqi, attribs = api_request(url, ctx.obj['TOKEN'])
-        click.echo(f'\nThe AQI at {location} is {aqi}.\n')
-        echo_attributions(attribs)
+        api_request(url, ctx.obj['TOKEN'])
 
 
 def validate_latlon(ctx, param, value):
@@ -45,9 +43,7 @@ def validate_latlon(ctx, param, value):
               )
 def geo(ctx, latlon):
     url = f'{ctx.obj["BASE_URL"]}geo:{latlon}/'
-    location, aqi, attribs = api_request(url, ctx.obj['TOKEN'])
-    print(f'\nThe AQI at {location} is {aqi}.\n')
-    echo_attributions(attribs)
+    api_request(url, ctx.obj['TOKEN'])
 
 
 def echo_attributions(attribs):
@@ -64,5 +60,10 @@ def api_request(url, payload):
     response = r.json()
     location = response['data']['city']['name']
     aqi = response['data']['aqi']
+    time = response['data']['time']['s']
+    tz = response['data']['time']['tz']
     attribs = response['data']['attributions']
-    return location, aqi, attribs
+
+    click.echo(f'\nThe AQI at {location} is {aqi}.')
+    click.echo(f'Updated at {time} {tz}\n')
+    echo_attributions(attribs)
