@@ -27,12 +27,23 @@ def main(ctx):
         echo_attributions(attribs)
 
 
+def validate_latlon(ctx, param, value):
+    try:
+        lat, lon = value[0], value[1]
+        return(lat.strip()+';'+lon.strip())
+    except ValueError:
+        raise click.BadParameter('latlon must be in format "lat lon"')
+
+
 @main.command()
 @click.pass_context
-@click.option('--latlon', '-l', help='Format: Latitude;Longitude')
+@click.option('--latlon', '-l',
+              callback=validate_latlon,
+              help='Format: Latitude, Longitude',
+              nargs=2,
+              prompt='Enter decimal latitude and longitude <lat lon>'
+              )
 def geo(ctx, latlon):
-    if not latlon:
-        latlon = click.prompt("Enter decimal lat and lon in the form: lat;lon")
     url = f'{ctx.obj["BASE_URL"]}geo:{latlon}/'
     location, aqi, attribs = api_request(url, ctx.obj['TOKEN'])
     print(f'\nThe AQI at {location} is {aqi}.\n')
