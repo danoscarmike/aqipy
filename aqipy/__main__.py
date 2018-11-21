@@ -29,10 +29,10 @@ def main(ctx):
 
 def validate_latlon(ctx, param, value):
     try:
-        lat, lon = value.split(',', 2)
+        lat, lon = value[0], value[1]
         return(lat.strip()+';'+lon.strip())
     except ValueError:
-        raise click.BadParameter('latlon must be in format "lat,lon"')
+        raise click.BadParameter('latlon must be in format "lat lon"')
 
 
 @main.command()
@@ -40,7 +40,8 @@ def validate_latlon(ctx, param, value):
 @click.option('--latlon', '-l',
               callback=validate_latlon,
               help='Format: Latitude, Longitude',
-              prompt='Enter decimal latitude and longitude <lat, lon>'
+              nargs=2,
+              prompt='Enter decimal latitude and longitude <lat lon>'
               )
 def geo(ctx, latlon):
     url = f'{ctx.obj["BASE_URL"]}geo:{latlon}/'

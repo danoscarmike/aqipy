@@ -14,8 +14,8 @@ A simple tool to get Air Quality Indices from around the world.
 To get the AQI for your current location (IP based):    
 `aqipy`
 
-To get the AQI for a specific location (latitude;longitude):    
-`aqipy geo [--latlon <lat;lon>]`    
+To get the AQI for a specific location (latitude longitude):    
+`aqipy geo [--latlon / -l <lat lon>]`    
 
 ## Attribution     
 This tool uses APIs provided by the [World Air Quality Index Project](http://waqi.info/).   
