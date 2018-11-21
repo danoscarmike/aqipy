@@ -47,12 +47,12 @@ def geo(ctx, latlon):
 
 
 def echo_attributions(attribs):
-    click.echo('With thanks to:')
+    print(f'With thanks to {attribs[-1]["name"]}, ', end="", flush=True)
     i = 0
-    while i < len(attribs)-1:
-        print(f'{attribs[i]["name"]},')
+    while i < len(attribs)-2:
+        print(f'{attribs[i]["name"]}, ', end="", flush=True)
         i += 1
-    click.echo(f'and {attribs[-1]["name"]}.\n')
+    print(f'and {attribs[-2]["name"]}.\n')
 
 
 def api_request(url, payload):
