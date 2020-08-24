@@ -76,12 +76,12 @@ def aqi_quality(aqi):
     if aqi < 50:
         return "Good", "green"
     if aqi < 100:
-        return "Moderate", "yellow"
+        return "Moderate", "bright_yellow"
     if aqi < 150:
         return "Unhealthy for sensitive groups", "yellow"
     if aqi < 200:
         return "Unhealthy", "red"
     if aqi < 300:
-        return "Very unhealthy", "magenta"
+        return "Very unhealthy", "bright_magenta"
     else:
         return "Hazardous", "magenta"
