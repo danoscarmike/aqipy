@@ -2,6 +2,8 @@ import click
 import os
 import requests
 
+from colored import fg, bg, attr
+
 
 @click.group(invoke_without_command=True)
 @click.pass_context
@@ -15,9 +17,15 @@ def main(ctx):
         api_token = os.environ["AQIPY_TOKEN"]
         ctx.obj["TOKEN"] = {"token": api_token}
         ctx.obj["BASE_URL"] = "http://api.waqi.info/feed/"
-    except:
-        click.echo(f"ERROR: You must set an AQIPY_TOKEN environment variable.")
-        click.echo(f"Request a token at https://aqicn.org/data-platform/token/#/")
+    except KeyError:
+        click.echo(
+            f"{fg(1)}ERROR:{attr(0)} You must set an AQIPY_TOKEN \
+            environment variable."
+        )
+        click.echo(
+            f"Request a token at \
+            {fg(12)}https://aqicn.org/data-platform/token/#/{attr(0)}"
+        )
         return
 
     if ctx.invoked_subcommand is None:
@@ -64,7 +72,7 @@ def get_header_len(leader_text, location):
 
 
 def echo_attributions(attribs):
-    click.secho(f"With thanks to: ", fg="blue")
+    click.echo(f"{fg(12)}With thanks to:{attr(0)}")
     click.echo(f'\t{attribs[-1]["name"]}')
     i = 0
     while i < len(attribs) - 1:
@@ -82,11 +90,11 @@ def echo_results(response):
 
     quality, color = aqi_quality(aqi)
     echo_header(location)
-    click.secho(f"The air quality is: ", fg="blue", nl=False)
-    click.secho(f"{quality}", fg=color, blink=True)
-    click.secho(f"The AQI is: ", fg="blue", nl=False)
+    click.echo(f"{fg(12)}The air quality is: {attr(0)}", nl=False)
+    click.echo(f"{fg(color)}{quality}{attr(0)}")
+    click.echo(f"{fg(12)}The AQI is: {attr(0)}", nl=False)
     click.echo(f"{aqi}")
-    click.secho(f"Updated: ", fg="blue", nl=False)
+    click.echo(f"{fg(12)}Updated: {attr(0)}", nl=False)
     click.echo(f"{time} {tz}")
     echo_attributions(attribs)
 
@@ -99,14 +107,14 @@ def api_request(url, payload):
 
 def aqi_quality(aqi):
     if aqi < 50:
-        return "Good", "green"
+        return "Good", "light_green"
     if aqi < 100:
-        return "Moderate", "bright_yellow"
+        return "Moderate", "light_yellow"
     if aqi < 150:
-        return "Unhealthy for sensitive groups", "yellow"
+        return "Unhealthy for sensitive groups", "orange_1"
     if aqi < 200:
         return "Unhealthy", "red"
     if aqi < 300:
-        return "Very unhealthy", "bright_magenta"
+        return "Very unhealthy", "dark_magenta_1"
     else:
-        return "Hazardous", "magenta"
+        return "Hazardous", "dark_red_1"

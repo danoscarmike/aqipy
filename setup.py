@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="aqipy",
-    version="0.4.0",
+    version="0.4.1",
     author="Dan O'Meara",
     author_email="omeara.dan@gmail.com",
     description="A simple CLI to get live Air Quality Indices",
@@ -14,7 +14,7 @@ setup(
     url="https://github.com/danoscarmike/aqipy",
     packages=["aqipy"],
     entry_points={"console_scripts": ["aqipy = aqipy.__main__:main"]},
-    install_requires=["click", "requests",],
+    install_requires=["click", "colored", "requests",],
     classifiers=[
         "Programming Language :: Python :: 3",
         "Development Status :: 3 - Alpha",
