@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name='aqipy',
-    version='0.2.1',
+    version='0.3.0',
     author='Dan O\'Meara',
     author_email='omeara.dan@gmail.com',
     description='A simple CLI to get live Air Quality Indices',
@@ -23,7 +23,7 @@ setup(
     ],
     classifiers=[
         'Programming Language :: Python :: 3',
-        'Development Status :: 1 - Planning',
+        'Development Status :: 3 - Alpha',
         'License :: OSI Approved :: MIT License',
     ]
 )
