@@ -22,12 +22,7 @@ def main(ctx):
 
     if ctx.invoked_subcommand is None:
         url = f'{ctx.obj["BASE_URL"]}here/'
-        aqi, location, time, tz, attribs = api_request(url, ctx.obj['TOKEN'])
-        quality, color = aqi_quality(aqi)
-        click.echo(f'The air quality at {location} is {click.style(quality, fg=color)}.')
-        click.echo(f'The air quality index is {aqi}.')
-        click.echo(f'Updated at {time} {tz}')
-        echo_attributions(attribs)
+        api_request(url, ctx.obj['TOKEN'])
 
 
 def validate_latlon(ctx, param, value):
@@ -51,24 +46,53 @@ def geo(ctx, latlon):
     api_request(url, ctx.obj['TOKEN'])
 
 
+def echo_header(location):
+    leader_text = "Air quality information for "
+    header_len = get_header_len(leader_text, location)
+    click.echo()
+    click.echo(f'{"-"*header_len}')
+    click.echo(f'{leader_text}{location}')
+    click.echo(f'{"-"*header_len}')
+
+
+def get_header_len(leader_text, location):
+    leader_len = len(leader_text)
+    location_len = len(location)
+    return leader_len + location_len
+
+
 def echo_attributions(attribs):
-    print(f'With thanks to {attribs[-1]["name"]}, ', end="", flush=True)
+    click.secho(f'With thanks to: ', fg='blue')
+    click.echo(f'\t{attribs[-1]["name"]}')
     i = 0
-    while i < len(attribs)-2:
-        print(f'{attribs[i]["name"]}, ', end="", flush=True)
+    while i < len(attribs)-1:
+        click.echo(f'\t{attribs[i]["name"]}')
         i += 1
-    print(f'and {attribs[-2]["name"]}.\n')
+    click.echo()
 
 
-def api_request(url, payload):
-    r = requests.get(url, params=payload)
-    response = r.json()
+def echo_results(response):
     location = response['data']['city']['name']
     aqi = response['data']['aqi']
     time = response['data']['time']['s']
     tz = response['data']['time']['tz']
     attribs = response['data']['attributions']
-    return aqi, location, time, tz, attribs
+
+    quality, color = aqi_quality(aqi)
+    echo_header(location)
+    click.secho(f'The air quality is: ', fg='blue', nl=False)
+    click.secho(f'{quality}', fg=color, blink=True)
+    click.secho(f'The AQI is: ', fg='blue', nl=False)
+    click.echo(f'{aqi}')
+    click.secho(f'Updated: ', fg='blue', nl=False)
+    click.echo(f'{time} {tz}')
+    echo_attributions(attribs)
+
+
+def api_request(url, payload):
+    r = requests.get(url, params=payload)
+    response = r.json()
+    echo_results(response) 
 
 
 def aqi_quality(aqi):
