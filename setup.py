@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="aqipy",
-    version="0.3.0",
+    version="0.4.0",
     author="Dan O'Meara",
     author_email="omeara.dan@gmail.com",
     description="A simple CLI to get live Air Quality Indices",
