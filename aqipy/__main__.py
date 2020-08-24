@@ -18,11 +18,17 @@ def main(ctx):
         ctx.obj['BASE_URL'] = 'http://api.waqi.info/feed/'
     except:
         click.echo(f'ERROR: You must set an AQIPY_TOKEN environment variable.')
+        click.echo(f'Request a token at https://aqicn.org/data-platform/token/#/')
         return
 
     if ctx.invoked_subcommand is None:
         url = f'{ctx.obj["BASE_URL"]}here/'
-        api_request(url, ctx.obj['TOKEN'])
+        aqi, location, time, tz, attribs = api_request(url, ctx.obj['TOKEN'])
+        quality, color = aqi_quality(aqi)
+        click.echo(f'The air quality at {location} is {click.style(quality, fg=color)}.')
+        click.echo(f'The air quality index is {aqi}.')
+        click.echo(f'Updated at {time} {tz}')
+        echo_attributions(attribs)
 
 
 def validate_latlon(ctx, param, value):
@@ -63,7 +69,19 @@ def api_request(url, payload):
     time = response['data']['time']['s']
     tz = response['data']['time']['tz']
     attribs = response['data']['attributions']
+    return aqi, location, time, tz, attribs
 
-    click.echo(f'\nThe AQI at {location} is {aqi}.')
-    click.echo(f'Updated at {time} {tz}\n')
-    echo_attributions(attribs)
+
+def aqi_quality(aqi):
+    if aqi < 50:
+        return "Good", "green"
+    if aqi < 100:
+        return "Moderate", "yellow"
+    if aqi < 150:
+        return "Unhealthy for sensitive groups", "yellow"
+    if aqi < 200:
+        return "Unhealthy", "red"
+    if aqi < 300:
+        return "Very unhealthy", "magenta"
+    else:
+        return "Hazardous", "magenta"
