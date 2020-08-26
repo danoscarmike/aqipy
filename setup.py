@@ -14,7 +14,7 @@ setup(
     url="https://github.com/danoscarmike/aqipy",
     packages=["aqipy"],
     entry_points={"console_scripts": ["aqipy = aqipy.__main__:main"]},
-    install_requires=["click", "colored", "requests",],
+    install_requires=["click", "colored", "requests", ],
     classifiers=[
         "Programming Language :: Python :: 3",
         "Development Status :: 3 - Alpha",

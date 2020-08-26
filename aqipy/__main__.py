@@ -2,7 +2,7 @@ import click
 import os
 import requests
 
-from colored import fg, bg, attr
+from colored import fg, attr
 
 
 @click.group(invoke_without_command=True)
@@ -84,6 +84,8 @@ def echo_attributions(attribs):
 def echo_results(response):
     location = response["data"]["city"]["name"]
     aqi = response["data"]["aqi"]
+    dominantpol = response["data"]["dominentpol"]
+    dominantpol_level = response["data"]["iaqi"][dominantpol]["v"]
     time = response["data"]["time"]["s"]
     tz = response["data"]["time"]["tz"]
     attribs = response["data"]["attributions"]
@@ -94,6 +96,8 @@ def echo_results(response):
     click.echo(f"{fg(color)}{quality}{attr(0)}")
     click.echo(f"{fg(12)}The AQI is: {attr(0)}", nl=False)
     click.echo(f"{aqi}")
+    click.echo(f"{fg(12)}The dominant pollution is: {attr(0)}", nl=False)
+    click.echo(f"{dominantpol} ({dominantpol_level})")
     click.echo(f"{fg(12)}Updated: {attr(0)}", nl=False)
     click.echo(f"{time} {tz}")
     echo_attributions(attribs)
